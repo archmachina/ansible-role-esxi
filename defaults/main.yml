@@ -1,0 +1,30 @@
+---
+
+# Connection Information
+vmware_validate_certs: true
+# vmware_esxi_connection: ""
+# vmware_esxi_username: ""
+# vmware_esxi_password: ""
+
+# Networking Configuration
+vmware_esxi_hostname: "{{ inventory_hostname | replace('_', '-') }}"
+vmware_esxi_dns_servers: []
+# vmware_esxi_domain: ""
+# vmware_esxi_search_domains: []
+# vmware_esxi_ipv6_state: disabled
+vmware_esxi_portgroups: []
+
+# SNMP Options
+vmware_esxi_snmp_state: enabled
+# vmware_esxi_snmp_communities: []
+# vmware_esxi_snmp_sys_contact: ""
+# vmware_esxi_snmp_sys_location: ""
+
+# Storage Options
+vmware_esxi_nfs_datastores: []
+vmware_esxi_rescan_hbas: true
+
+# Misc Options
+vmware_esxi_custom_options: {}
+vmware_esxi_service_policies: []
+vmware_esxi_ntp_servers: []

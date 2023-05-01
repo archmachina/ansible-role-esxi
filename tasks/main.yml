@@ -1,0 +1,148 @@
+---
+
+- name: ESXi Hostname
+  community.vmware.vmware_host_dns:
+    hostname: "{{ vmware_esxi_connection }}"
+    username: "{{ vmware_esxi_username }}"
+    password: "{{ vmware_esxi_password }}"
+    host_name: "{{ vmware_esxi_hostname }}"
+    validate_certs: "{{ vmware_validate_certs }}"
+    type: static
+
+- name: ESXi DNS Servers
+  community.vmware.vmware_host_dns:
+    hostname: "{{ vmware_esxi_connection }}"
+    username: "{{ vmware_esxi_username }}"
+    password: "{{ vmware_esxi_password }}"
+    validate_certs: "{{ vmware_validate_certs }}"
+    type: static
+    dns_servers: "{{ vmware_esxi_dns_servers }}"
+  when: vmware_esxi_dns_servers is defined
+
+- name: ESXi Domain
+  community.vmware.vmware_host_dns:
+    hostname: "{{ vmware_esxi_connection }}"
+    username: "{{ vmware_esxi_username }}"
+    password: "{{ vmware_esxi_password }}"
+    validate_certs: "{{ vmware_validate_certs }}"
+    type: static
+    domain: "{{ vmware_esxi_domain }}"
+  when: vmware_esxi_domain is defined
+
+- name: ESXi Search Domain
+  community.vmware.vmware_host_dns:
+    hostname: "{{ vmware_esxi_connection }}"
+    username: "{{ vmware_esxi_username }}"
+    password: "{{ vmware_esxi_password }}"
+    validate_certs: "{{ vmware_validate_certs }}"
+    type: static
+    search_domains: "{{ vmware_esxi_search_domains }}"
+  when: vmware_esxi_search_domains is defined
+
+- name: ESXi PortGroups
+  community.vmware.vmware_portgroup:
+    hostname: "{{ vmware_esxi_connection }}"
+    username: "{{ vmware_esxi_username }}"
+    password: "{{ vmware_esxi_password }}"
+    validate_certs: "{{ vmware_validate_certs }}"
+    esxi_hostname: "{{ vmware_esxi_hostname }}"
+    portgroup: "{{ item.portgroup }}"
+    security: "{{ item.security|default(omit) }}"
+    state: "{{ item.state|default('present') }}"
+    traffic_shaping: "{{ item.traffic_shaping|default(omit) }}"
+    teaming: "{{ item.teaming|default(omit) }}"
+    switch: "{{ item.switch }}"
+    vlan_id: "{{ item.vlan_id }}"
+  loop: "{{ vmware_esxi_portgroups }}"
+
+- name: ESXi NTP Servers
+  community.vmware.vmware_host_ntp:
+    hostname: "{{ vmware_esxi_connection }}"
+    username: "{{ vmware_esxi_username }}"
+    password: "{{ vmware_esxi_password }}"
+    validate_certs: "{{ vmware_validate_certs }}"
+    esxi_hostname: "{{ vmware_esxi_hostname }}"
+    ntp_servers: "{{ vmware_esxi_ntp_servers }}"
+
+- name: ESXi SNMP
+  community.vmware.vmware_host_snmp:
+    hostname: "{{ vmware_esxi_connection }}"
+    username: "{{ vmware_esxi_username }}"
+    password: "{{ vmware_esxi_password }}"
+    validate_certs: "{{ vmware_validate_certs }}"
+    community: "{{ vmware_esxi_snmp_communities }}"
+    state: "{{ vmware_esxi_snmp_state }}"
+    sys_contact: "{{ vmware_esxi_snmp_sys_contact|default(omit) }}"
+    sys_location: "{{ vmware_esxi_snmp_sys_location|default(omit) }}"
+  when: vmware_esxi_snmp_communities is defined
+
+- name: ESXi Services
+  community.vmware.vmware_host_service_manager:
+    hostname: "{{ vmware_esxi_connection }}"
+    username: "{{ vmware_esxi_username }}"
+    password: "{{ vmware_esxi_password }}"
+    validate_certs: "{{ vmware_validate_certs }}"
+    esxi_hostname: "{{ vmware_esxi_hostname }}"
+    service_name: "{{ item.service_name }}"
+    state: "{{ item.state }}"
+    service_policy: "{{ item.service_policy }}"
+  loop: "{{ vmware_esxi_service_policies }}"
+
+- name: Disable IPv6
+  community.vmware.vmware_host_ipv6:
+    hostname: "{{ vmware_esxi_connection }}"
+    username: "{{ vmware_esxi_username }}"
+    password: "{{ vmware_esxi_password }}"
+    validate_certs: "{{ vmware_validate_certs }}"
+    esxi_hostname: "{{ vmware_esxi_hostname }}"
+    state: "{{ vmware_esxi_ipv6_state }}"
+  when: vmware_esxi_ipv6_state is defined
+
+- name: Custom Options
+  community.vmware.vmware_host_config_manager:
+    hostname: "{{ vmware_esxi_connection }}"
+    username: "{{ vmware_esxi_username }}"
+    password: "{{ vmware_esxi_password }}"
+    validate_certs: "{{ vmware_validate_certs }}"
+    esxi_hostname: "{{ vmware_esxi_hostname }}"
+    options: "{{ vmware_esxi_custom_options }}"
+
+# - name: Autostart Configuration
+#   community.vmware.vmware_host_auto_start:
+#     hostname: "{{ vmware_esxi_connection }}"
+#     username: "{{ vmware_esxi_username }}"
+#     password: "{{ vmware_esxi_password }}"
+#     validate_certs: "{{ vmware_validate_certs }}"
+#     esxi_hostname: "{{ vmware_esxi_hostname }}"
+#     system_defaults:
+#       enabled: true
+#       start_delay: 120
+#       stop_action: guestShutdown
+#       stop_delay: 120
+#       wait_for_heartbeat: true
+
+- name: Rescan HBA
+  community.vmware.vmware_host_scanhba:
+    hostname: "{{ vmware_esxi_connection }}"
+    username: "{{ vmware_esxi_username }}"
+    password: "{{ vmware_esxi_password }}"
+    validate_certs: "{{ vmware_validate_certs }}"
+    esxi_hostname: "{{ vmware_esxi_hostname }}"
+    refresh_storage: true
+    rescan_hba: true
+    rescan_vmfs: true
+  when: vmware_esxi_rescan_hbas
+
+- name: NFS Datastores
+  community.vmware.vmware_host_datastore:
+    hostname: "{{ vmware_esxi_connection }}"
+    username: "{{ vmware_esxi_username }}"
+    password: "{{ vmware_esxi_password }}"
+    validate_certs: "{{ vmware_validate_certs }}"
+    esxi_hostname: "{{ vmware_esxi_hostname }}"
+    datastore_name: "{{ item.datastore_name }}"
+    datastore_type: "{{ item.datastore_type }}"
+    nfs_path: "{{ item.nfs_path }}"
+    nfs_server: "{{ item.nfs_server }}"
+    state: present
+  loop: "{{ vmware_esxi_nfs_datastores }}"
